@@ -3,6 +3,13 @@ This is my take on localization string editing for Star Citizen.
 
 If you aren't familiar, it is possible to change various strings in the game by creating a file called `global.ini` in the `LIVE/Data/Localization/english/` directory, and then adding `g_language = english` to your USER.cfg file. The problem with this is that said `global.ini` file must contain ALL strings for the game, or you'll get a UI full of things like **@frontend_LearnToPlay**.
 
+# Why would I want that?
+It allows you to include useful information such as the class and grade of a ship component in the name, allowing you to know at a glance if it is worth looting. At time of writing, my intention is to do this for example:
+
+`XL-1` → `XL-1 [Mil A]`
+
+But I might also include a general suggestion on the value of mineables and harvestables. E.g. `Corundum [Low Value]`
+
 # Why not just use...?
 I took inspiration for this tool from existing solutions:
 * https://github.com/MrKraken/SCLocalizationMergeTool
