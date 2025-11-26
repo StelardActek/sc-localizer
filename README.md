@@ -1,5 +1,5 @@
 # Nevermind all this, just give me the mod
-Grab `global.ini` from the `output` folder in this repository, then read the next section for what to do with it.
+Grab [`global.ini`](https://github.com/StelardActek/sc-localizer/raw/refs/heads/main/output/global.ini) from the `output` folder in this repository, then read the next section for what to do with it.
 
 # What is this?
 This is my take on localization string editing for Star Citizen.
