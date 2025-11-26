@@ -82,78 +82,70 @@ public static class Program
             outputOption
         };
 
-        var parseResult = rootCommand.Parse(args);
-
-        if (parseResult.Errors.Count > 0)
+        rootCommand.SetAction(parseResult =>
         {
-            foreach (var error in parseResult.Errors)
+            var baseInfo = parseResult.GetValue(baseOption);
+            var mergeInfos = parseResult.GetValue(mergeOption) ?? [];
+            var outputInfo = parseResult.GetValue(outputOption);
+            var lang = parseResult.GetValue(langOption);
+            Debug.Assert(baseInfo != null);
+            Debug.Assert(lang != null);
+
+            Stream? stream;
+            var ini = new Dictionary<string, string>();
+            
+            if (baseInfo.Extension.Equals(".p4k", StringComparison.InvariantCultureIgnoreCase))
             {
-                Console.Error.WriteLine(error.Message);
-            }
+                var localizationPath = LOCALIZATION_PATH.Replace("{lang}", lang);
 
-            return -1;
-        }
+                var p4KSource = new P4kSource(baseInfo);
 
-        parseResult.Invoke();
+                stream = p4KSource.GetDataStream(localizationPath);
 
-        var baseInfo = parseResult.GetValue(baseOption);
-        var mergeInfos = parseResult.GetValue(mergeOption) ?? [];
-        var outputInfo = parseResult.GetValue(outputOption);
-        var lang = parseResult.GetValue(langOption);
-        Debug.Assert(baseInfo != null);
-        Debug.Assert(lang != null);
-
-        Stream? stream;
-        var ini = new Dictionary<string, string>();
-        
-        if (baseInfo.Extension.Equals(".p4k", StringComparison.InvariantCultureIgnoreCase))
-        {
-            var localizationPath = LOCALIZATION_PATH.Replace("{lang}", lang);
-
-            var p4KSource = new P4kSource(baseInfo);
-
-            stream = p4KSource.GetDataStream(localizationPath);
-
-            if (stream == null)
-            {
-                Console.Error.WriteLine($"Error: Could not find {localizationPath} in {baseInfo.Name}");
-                return -1;
+                if (stream == null)
+                {
+                    Console.Error.WriteLine($"Error: Could not find {localizationPath} in {baseInfo.Name}");
+                    return -1;
+                }
+                else
+                {
+                    Console.Error.WriteLine($"Using base localization file {localizationPath} from {baseInfo.FullName}");
+                }
             }
             else
             {
-                Console.Error.WriteLine($"Using base localization file {localizationPath} from {baseInfo.FullName}");
+                stream = baseInfo.OpenRead();
+                Console.Error.WriteLine($"Using base localisation file {baseInfo.FullName}");
             }
-        }
-        else
-        {
-            stream = baseInfo.OpenRead();
-            Console.Error.WriteLine($"Using base localisation file {baseInfo.FullName}");
-        }
 
-        using (stream)
-        {
-            PopulateIni(ini, stream, reportAdd: false);
-        }
-
-        foreach (var mergeInfo in mergeInfos)
-        {
-            Console.Error.WriteLine($"Merging changes from {mergeInfo.FullName}");
-            using var mergeStream = mergeInfo.OpenRead();
-            PopulateIni(ini, mergeStream);
-        }
-
-        if (outputInfo != null)
-        {
-            Console.Error.WriteLine($"Writing output file {outputInfo.FullName}");
-            using var outputStream = outputInfo.OpenWrite();
-            using var outputStreamWriter = new StreamWriter(outputStream, new UTF8Encoding(true));
-            foreach (var kvp in ini)
+            using (stream)
             {
-                outputStreamWriter.WriteLine($"{kvp.Key}={kvp.Value}");
+                PopulateIni(ini, stream, reportAdd: false);
             }
-        }
+
+            foreach (var mergeInfo in mergeInfos)
+            {
+                Console.Error.WriteLine($"Merging changes from {mergeInfo.FullName}");
+                using var mergeStream = mergeInfo.OpenRead();
+                PopulateIni(ini, mergeStream);
+            }
+
+            if (outputInfo != null)
+            {
+                Console.Error.WriteLine($"Writing output file {outputInfo.FullName}");
+                using var outputStream = outputInfo.OpenWrite();
+                using var outputStreamWriter = new StreamWriter(outputStream, new UTF8Encoding(true));
+                foreach (var kvp in ini)
+                {
+                    outputStreamWriter.WriteLine($"{kvp.Key}={kvp.Value}");
+                }
+            }
+
+            return 0;
+        });
         
-        return 0;
+        var parseResult = rootCommand.Parse(args);
+        return parseResult.Invoke();
     }
 
     private static void PopulateIni(Dictionary<string, string> ini, Stream source, bool reportAdd = true)
