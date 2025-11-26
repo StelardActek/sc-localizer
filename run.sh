@@ -12,4 +12,9 @@ if [ -d "$scriptpath/output" ]; then
 fi
 mkdir "$scriptpath/output"
 
-"$scriptpath/publish/sc-localizer-linux" -b ~/Games/star-citizen/StarCitizen/LIVE/Data.p4k -m "$scriptpath/data/components-annotated.ini" -m "$scriptpath/data/commodities-annotated.ini" -o "$scriptpath/output/global.ini"
+merge=""
+for m in $(ls $scriptpath/data/*-annotated.ini); do
+    merge="$merge -m \"$m\""
+done
+
+echo $merge | xargs "$scriptpath/publish/sc-localizer-linux" -b ~/Games/star-citizen/StarCitizen/LIVE/Data.p4k -o "$scriptpath/output/global.ini"
