@@ -44,10 +44,12 @@ Takes a copy of `global.ini` from the live `Data.p4k` file, and writes in change
 
 
 #### Windows
-`sc-localizer-win.exe -b "C:\Program Files\Roberts Space Industries\StarCitizen\LIVE\Data.p4k" -o "%USERPROFILE%\Downloads\global.ini"`
+These examples all assume you have downloaded `sc-localizer-win.exe`, `components-annotated.ini` and `commodities-annotated.ini` to your Downloads folder.
+
+`"%USERPROFILE%\Downloads\sc-localizer-win.exe" -b "C:\Program Files\Roberts Space Industries\StarCitizen\LIVE\Data.p4k" -o "%USERPROFILE%\Downloads\global.ini"`
 
 Saves an unaltered copy of `global.ini` into your Downloads folder.
 
-`sc-localizer-win.exe -b "C:\Program Files\Roberts Space Industries\StarCitizen\LIVE\Data.p4k" -m "%USERPROFILE\Downloads\components-annotated.ini" -m "%USERPROFILE\Downloads\commodities-annotated.ini" -o "%USERPROFILE%\Downloads\global.ini"`
+`"%USERPROFILE%\Downloads\sc-localizer-win.exe" -b "C:\Program Files\Roberts Space Industries\StarCitizen\LIVE\Data.p4k" -m "%USERPROFILE\Downloads\components-annotated.ini" -m "%USERPROFILE\Downloads\commodities-annotated.ini" -o "%USERPROFILE%\Downloads\global.ini"`
 
-Takes a copy of `global.ini` from the live `Data.p4k` file, and writes in changes from `components-annotated.ini`, then writes in changes from `commodities-annotated.ini`, and saves the result as `Downloads\global.ini`. Assuming both the annotated ini files are also saved in your Downloads folder.
+Takes a copy of `global.ini` from the live `Data.p4k` file, and writes in changes from `components-annotated.ini`, then writes in changes from `commodities-annotated.ini`, and saves the result as `Downloads\global.ini`.
