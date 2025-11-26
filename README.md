@@ -36,5 +36,13 @@ You'll need to download either `sc-localizer-linux` or `sc-localizer-win.exe` de
 | -l <lang> | (Optional, defaults to 'english') I haven't tested other languages, but in theory it should work. You only need to specify this if you are providing your Data.p4k file for the `-b` option. At time of writing, valid options for `-l` include: `polish_(poland)`, `korean_(south_korea)`, `chinese_(traditional)`, `chinese_(simplified)`, `spanish_(latin_america)`, `spanish_(spain)`, `german_(germany)`, `italian_(italy)`, `japanese_(japan)`, `portuguese_(brazil)`, `french_(france)`, and `english`. |
 | -o <path> | (Required) The full path including filename of where you would like the output written. WILL OVERWRITE WITHOUT PROMPTING. |
 
-E.g.
+### Examples
+#### Linux
 `sc-localizer-linux -b ~/Games/star-citizen/StarCitizen/LIVE/Data.p4k -m ./data/components-annotated.ini -m ./data/commodities-annotated.ini -o ./output/global.ini`
+
+Takes a copy of `global.ini` from the live `Data.p4k` file, and writes in changes from `components-annotated.ini`, then writes in changes from `commodities-annotated.ini`, and saves the result as `./output/global.ini`.
+
+#### Windows
+`sc-localizer-win.exe -b "C:\Program Files\Roberts Space Industries\StarCitizen\LIVE\Data.p4k" -o "%USERPROFILE%\Downloads\global.ini"`
+
+Saves an unaltered copy of `global.ini` into your Downloads folder.
