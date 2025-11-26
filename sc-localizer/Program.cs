@@ -165,7 +165,7 @@ public static class Program
                 continue;
             }
 
-            var (key, value) = (line.Substring(0, eqIdx.Value), line.Substring(eqIdx.Value + 1));
+            var (key, value) = (line?.Substring(0, eqIdx.Value) ?? "", line?.Substring(eqIdx.Value + 1) ?? "");
 
             if (ini.ContainsKey(key))
             {
