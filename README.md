@@ -42,7 +42,12 @@ You'll need to download either `sc-localizer-linux` or `sc-localizer-win.exe` de
 
 Takes a copy of `global.ini` from the live `Data.p4k` file, and writes in changes from `components-annotated.ini`, then writes in changes from `commodities-annotated.ini`, and saves the result as `./output/global.ini`.
 
+
 #### Windows
 `sc-localizer-win.exe -b "C:\Program Files\Roberts Space Industries\StarCitizen\LIVE\Data.p4k" -o "%USERPROFILE%\Downloads\global.ini"`
 
 Saves an unaltered copy of `global.ini` into your Downloads folder.
+
+`sc-localizer-win.exe -b "C:\Program Files\Roberts Space Industries\StarCitizen\LIVE\Data.p4k" -m "%USERPROFILE\Downloads\components-annotated.ini" -m "%USERPROFILE\Downloads\commodities-annotated.ini" -o "%USERPROFILE%\Downloads\global.ini"`
+
+Takes a copy of `global.ini` from the live `Data.p4k` file, and writes in changes from `components-annotated.ini`, then writes in changes from `commodities-annotated.ini`, and saves the result as `Downloads\global.ini`. Assuming both the annotated ini files are also saved in your Downloads folder.
