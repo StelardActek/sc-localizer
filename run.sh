@@ -12,7 +12,16 @@ if [ -d "$scriptpath/output" ]; then
 fi
 mkdir "$scriptpath/output"
 
+# Fetch external data
+mkdir -p "$scriptpath/extdata"
+curl https://raw.githubusercontent.com/StelardActek/StarStrings/refs/heads/master/contracts.ini -o "$scriptpath/extdata/contracts-annotated.ini"
+
+# Process local data
 merge=""
+# External first so local trumps it
+for m in $(ls $scriptpath/extdata/*-annotated.ini); do
+    merge="$merge -m \"$m\""
+done
 for m in $(ls $scriptpath/data/*-annotated.ini); do
     merge="$merge -m \"$m\""
 done
