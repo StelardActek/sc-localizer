@@ -1,4 +1,5 @@
 extdata/
+install.sh
 
 # JetBains Rider
 .idea/
