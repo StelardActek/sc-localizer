@@ -167,7 +167,7 @@ public static class Program
 
             var (key, value) = (line?.Substring(0, eqIdx.Value) ?? "", line?.Substring(eqIdx.Value + 1) ?? "");
 
-            if (ini.ContainsKey(key))
+            if (ini.ContainsKey(key) || ini.ContainsKey($"{key},P"))
             {
                 Console.Error.WriteLine($"[Replace]: {key}={value}");
                 ini[key] = value;
