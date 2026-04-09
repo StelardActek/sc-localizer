@@ -14,7 +14,8 @@ mkdir "$scriptpath/output"
 
 # Fetch external data
 mkdir -p "$scriptpath/extdata"
-curl https://raw.githubusercontent.com/StelardActek/StarStrings/refs/heads/master/contracts.ini -o "$scriptpath/extdata/contracts-annotated.ini"
+curl https://raw.githubusercontent.com/MrKraken/StarStrings/refs/heads/master/contracts.ini -o "$scriptpath/extdata/contracts-annotated.ini"
+curl https://raw.githubusercontent.com/MrKraken/StarStrings/refs/heads/master/mining.ini -o "$scriptpath/extdata/mining-annotated.ini"
 
 # Process local data
 merge=""
