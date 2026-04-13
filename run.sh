@@ -12,6 +12,13 @@ if [ -d "$scriptpath/output" ]; then
 fi
 mkdir "$scriptpath/output"
 
+# Extract stock global.ini
+"$scriptpath/publish/sc-localizer-linux" -b ~/Games/star-citizen/StarCitizen/LIVE/Data.p4k -o "$scriptpath/data/global.ini"
+
+# Fun edits
+grep -iE '=.*aluminum' "$scriptpath/data/global.ini" | sed 's/\(^[^=]*=.*\)\([Aa]\)luminum/\1\2luminium/g' > "$scriptpath/data/misc-annotated.ini"
+grep -iE '=.*Ursa Medivac' "$scriptpath/data/global.ini" | sed 's/\(^[^=]*=.*\)Ursa Medivac/\1Nursa/g' >> "$scriptpath/data/misc-annotated.ini"
+
 # Fetch external data
 mkdir -p "$scriptpath/extdata"
 curl https://raw.githubusercontent.com/MrKraken/StarStrings/refs/heads/master/contracts.ini -o "$scriptpath/extdata/contracts-annotated.ini"
