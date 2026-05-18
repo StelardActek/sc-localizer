@@ -6,4 +6,4 @@ if [ ! -d "$scriptpath" ]; then
     exit 1
 fi
 
-grep -E 'item_Name_?(COOL|POWR|SHLD|QDRV|RADR)_' "$scriptpath/../global.ini" > "$scriptpath/components.ini"
+grep -Ei 'item_Name_?(COOL|POWR|SHLD|QDRV|RADR)_' "$scriptpath/../global.ini" > "$scriptpath/components.ini"
