@@ -15,6 +15,11 @@ mkdir "$scriptpath/output"
 # Extract stock global.ini
 "$scriptpath/publish/sc-localizer-linux" -b ~/Games/star-citizen/StarCitizen/LIVE/Data.p4k -o "$scriptpath/data/global.ini"
 
+# Process components
+"$scriptpath/data/components/mkbase.sh"
+"$scriptpath/data/components/fetch-json.sh"
+"$scriptpath/data/components/annotate.ps1" > "$scriptpath/data/components-annotated.ini"
+
 # Fun edits
 grep -iE '=.*aluminum' "$scriptpath/data/global.ini" | sed 's/\(^[^=]*=.*\)\([Aa]\)luminum/\1\2luminium/g' > "$scriptpath/data/misc-annotated.ini"
 grep -iE '=.*Ursa Medivac' "$scriptpath/data/global.ini" | sed 's/\(^[^=]*=.*\)Ursa Medivac/\1Nursa/g' >> "$scriptpath/data/misc-annotated.ini"
