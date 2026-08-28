@@ -1,63 +1,114 @@
 #!/usr/bin/pwsh
 
-$fixes = @{"EcoFlow" = "Eco-Flow"}
-$remove = @("gmisl_s03_cs_fski_arrester")
-$add = @{"Arrester III-G"=@{"size"=3; "class"=$null; "grade"="A"; "type"="Missile"}}
+$fixes = @{
+    "item_NameCOOL_AEGS_S04_Idirs"="item_NameCOOL_AEGS_S04_Idris";
+}
+
+$classAbbrev = @{
+    "Military"="Mil";
+    "Civilian"="Civ";
+    "Competition"="Comp";
+    "Industrial"="Ind";
+    "Stealth"="Slth";
+}
 
 $data = @{}
-ls $PSScriptRoot/*.json |% {
-    $finfo = $_
+[IO.File]::ReadAllLines("$PSScriptRoot/components-desc.ini") |% {
+    $key,$value = $_.Split("=")
+    $value = $value.Replace("\n", "`n")
 
-    $j = Get-Content $finfo -Raw | ConvertFrom-Json
-    $j |% {
-        $c = $_
+    if ($key.EndsWith("_Default") -or $key.EndsWith("_Default,P") -or $key.EndsWith("_Controller") -or $key.EndsWith("_Controller,P")) {
+        return
+    }
 
-        if ($remove -contains $c.localName) {
-            return
-        }
+    $rSize = [regex]"\b\s*Size:\s*(\d*)\b"
+    $rSizeBackup = [regex]"_S(\d*)_"
+    $rGrade = [regex]"\b\s*Grade:\s*(N/A|[A-Z]*)\b"
+    $rClass = [regex]"\b\s*Class:\s*(\w*)\b"
 
-        if ($data.ContainsKey($c.data.name)) {
-            [Console]::Error.WriteLine("Found duplicate component name: $($c.data.name)")
-            $data[$c.data.name].size ??= $c.data.size
-            $data[$c.data.name].class ??= $c.data.class
-            $data[$c.data.name].grade ??= $c.data.grade
-            $data[$c.data.name].type ??= $c.data.type
+    $mSize = $rSize.Match($value)
+    $mSizeBackup = $rSizeBackup.Match($key)
+    $mGrade = $rGrade.Match($value)
+    $mClass = $rClass.Match($value)
+
+    $size = $mSize.Groups[1].Value
+    if ([string]::IsNullOrWhiteSpace($size)) {
+        $iSize = 0
+        if ([int]::TryParse($mSizeBackup.Groups[1].Value, [ref]$iSize)) {
+            $size = $iSize.ToString()
         } else {
-            $data.Add($c.data.name, @{"size"=$c.data.size; "class"=$c.data.class; "grade"=$c.data.grade; "type"=$c.data.type})
+            $size = $null
         }
     }
-}
-$add.Keys |% {
-    $data.Add($_, $add[$_])
+    $grade = $mGrade.Groups[1].Value
+    if ($grade -eq "") { $grade = $null }
+    $class = $mClass.Groups[1].Value
+    if ($class -eq "") { $class = $null }
+
+    if ($class -and $classAbbrev.ContainsKey($class)) {
+        $class = $classAbbrev[$class]
+    }
+
+    $rDictKey = [regex]"^[Ii]tem_[Dd]esc_?(.*?)(?:_SCItem)?(?:,P)?$"
+    $mDictKey = $rDictKey.Match($key)
+    if (!$mDictKey.Success) {
+        Write-Error "Could not match dict key: $key"
+        exit -1
+    }
+    $dictKey = $mDictKey.Groups[1].Value
+
+    #Write-Host "$key => $dictKey  Size: $size  Grade: $grade  Class: $class"
+    $data[$dictKey] = @{"size"=$size; "class"=$class; "grade"=$grade}
 }
 
 [IO.File]::ReadAllLines("$PSScriptRoot/components.ini") |% {
     $key,$value = $_.Split("=")
-    $seek = $value.ToLower()
+    $seek = $key
 
     if ($fixes.ContainsKey($seek)) {
-        $seek = $fixes[$seek].ToLower()
+        $seek = $fixes[$seek]
     }
 
     if ($key.EndsWith("_Default") -or $key.EndsWith("_Controller")) {
         return
     }
 
-    foreach ($file in (gci "$PSScriptRoot/*.json")) {
-        $component = $data[$seek]
-        $annotation = "S$($component.size ?? '?') $($component.class ?? 'Unk') $($component.grade ?? '?')"
+    $rDictKey = [regex]"^[Ii]tem_[Nn]ame_?(.*?)(?:_SCItem)?(?:,P)?$"
+    $mDictKey = $rDictKey.Match($seek)
+    if (!$mDictKey.Success) {
+        Write-Error "Could not match dict key: $seek"
+        exit -1
+    }
+    $dictKey = $mDictKey.Groups[1].Value
 
-        if ($annotation) {
-            break
+    $component = $null
+    $annotation = $null
+    if ($data.ContainsKey($dictKey)) {
+        $component = $data[$dictKey]
+    } elseif ($data.ContainsKey("$dictKey,P")) {
+        $component = $data["$dictKey,P"]
+    } elseif ($data.ContainsKey($dictKey.Replace("_SCItem", ""))) {
+        $component = $data[$dictKey.Replace("_SCItem", "")]
+    }
+    if ($component) {
+        $parts = New-Object System.Collections.Generic.List[string]
+        if ($component.size) {
+            $parts.Add("S$($component.size)")
         }
+        if ($component.class) {
+            $parts.Add($component.class)
+        }
+        if ($component.grade) {
+            $parts.Add($component.grade)
+        }
+
+        $annotation = [string]::Join(" ", $parts)
     }
 
     if (!$annotation) {
         "$key=$value [Unk]"
         return
     }
-
-    $annotation = $annotation.Replace("Military", "Mil").Replace("Civilian", "Civ").Replace("Competition", "Comp").Replace("Industrial", "Ind").Replace("Stealth", "Slth")
 
     "$key=$value [$annotation]"
 }

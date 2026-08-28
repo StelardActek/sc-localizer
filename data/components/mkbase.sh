@@ -7,3 +7,4 @@ if [ ! -d "$scriptpath" ]; then
 fi
 
 grep -Ei 'item_Name_?(COOL|POWR|SHLD|QDRV|RADR)_' "$scriptpath/../global.ini" > "$scriptpath/components.ini"
+grep -Ei 'item_Desc_?(COOL|POWR|SHLD|QDRV|RADR)_' "$scriptpath/../global.ini" > "$scriptpath/components-desc.ini"

@@ -17,7 +17,6 @@ mkdir "$scriptpath/output"
 
 # Process components
 "$scriptpath/data/components/mkbase.sh"
-"$scriptpath/data/components/fetch-json.sh"
 "$scriptpath/data/components/annotate.ps1" > "$scriptpath/data/components-annotated.ini"
 
 # Fun edits
